@@ -1,0 +1,9 @@
+{
+    "require": {
+        "slim/slim": "4.*",
+        "slim/psr7": "^1.5"
+    },
+    "require-dev": {
+        "beyondcode/expose": "^2.0"
+    }
+}
