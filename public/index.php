@@ -1,4 +1,5 @@
 <?php
+
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
@@ -13,7 +14,20 @@ $app->get('/', function (Request $request, Response $response, array $args) {
 });
 
 $app->post('/ipn', function (Request $request, Response $response, array $args) {
-    file_put_contents("requestbody", $request->getBody());
+    $requestBody = "cmd=_notify-validate&" . $request->getBody();
+    $client = new \GuzzleHttp\Client();
+    $res = $client->request(
+        "POST",
+        "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr",
+        ["body" => $requestBody]
+    );
+    if ($res->getBody() == "VERIFIED") {
+        file_put_contents("requestbody", "valid");
+        // valid hívás
+    } else {
+        file_put_contents("requestbody", "invalid");
+        // invalid hívás
+    }
     return $response;
 });
 $app->get('/success', function (Request $request, Response $response, array $args) {
