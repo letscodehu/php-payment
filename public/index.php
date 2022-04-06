@@ -1,41 +1,22 @@
 <?php
 
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use DI\Container;
 use Slim\Factory\AppFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+$container = new Container();
+
+$services = require __DIR__."/../app/services.php";
+$services($container);
+
+AppFactory::setContainer($container);
 $app = AppFactory::create();
 
-$app->get('/', function (Request $request, Response $response, array $args) {
-    $response->getBody()->write(file_get_contents("templates/index.html"));
-    return $response;
-});
+$middleware = require __DIR__."/../app/middlewares.php";
+$middleware($app);
 
-$app->post('/ipn', function (Request $request, Response $response, array $args) {
-    $requestBody = "cmd=_notify-validate&" . $request->getBody();
-    $client = new \GuzzleHttp\Client();
-    $res = $client->request(
-        "POST",
-        "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr",
-        ["body" => $requestBody]
-    );
-    if ($res->getBody() == "VERIFIED") {
-        file_put_contents("requestbody", "valid");
-        // valid hívás
-    } else {
-        file_put_contents("requestbody", "invalid");
-        // invalid hívás
-    }
-    return $response;
-});
-$app->get('/success', function (Request $request, Response $response, array $args) {
-    $response->getBody()->write(file_get_contents("templates/success.html"));
-    return $response;
-});
-$app->get('/cancel', function (Request $request, Response $response, array $args) {
-    $response->getBody()->write(file_get_contents("templates/cancel.html"));
-    return $response;
-});
+$routes = require __DIR__."/../app/routes.php";
+$routes($app);
+
 $app->run();
