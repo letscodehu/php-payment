@@ -3,7 +3,10 @@
         "slim/slim": "4.*",
         "slim/psr7": "^1.5",
         "guzzlehttp/guzzle": "^7.0",
-        "php-di/php-di": "^6.3"
+        "php-di/php-di": "^6.3",
+        "mezzio/mezzio-authentication": "^1.4",
+        "mezzio/mezzio-authentication-session": "^1.4",
+        "mezzio/mezzio-session-ext": "^1.12"
     },
     "require-dev": {
         "beyondcode/expose": "^2.0"
