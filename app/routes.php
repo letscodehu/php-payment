@@ -19,6 +19,8 @@ return function (App $app) {
         return $response;
     }
 
+    $app->post('/ipn', "IpnAction:handle");
+
     $app->get('/', function (Request $request, Response $response, array $args) {
         $user = $this->get('authentication')->authenticate($request);
         return view($response, "index", ["loggedIn" => $user]);
@@ -34,24 +36,6 @@ return function (App $app) {
         return view($response, "plans", ["loggedIn" => $user]);
     });
 
-    $app->post('/ipn', function (Request $request, Response $response, array $args) {
-        $requestBody = "cmd=_notify-validate&" . $request->getBody();
-        $client = new \GuzzleHttp\Client();
-        $res = $client->request(
-            "POST",
-            "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr",
-            ["body" => $requestBody]
-        );
-        if ($res->getBody() === "VERIFIED") {
-            // check if the ipn_track_id already processed
-            // check on whats in the body
-            // register the user with the email
-            // activate the subscription
-            // send email with activation info
-            // store the ipn_track_ids which were processed
-        }
-        return $response;
-    });
     $app->get('/profile', function (Request $request, Response $response, array $args) {
         $user = $this->get('authentication')->authenticate($request);
         return view($response, "index", ["loggedIn" => $user]);

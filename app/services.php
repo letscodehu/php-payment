@@ -1,5 +1,8 @@
 <?php
 
+use App\Action\IpnAction;
+use App\Paypal\IpnValidator;
+use GuzzleHttp\Client;
 use Mezzio\Authentication\AuthenticationMiddleware;
 use Mezzio\Authentication\DefaultUser;
 use Mezzio\Authentication\Session\PhpSession;
@@ -13,6 +16,13 @@ return function (ContainerInterface $container) {
         return new AuthenticationMiddleware($container->get("authentication"));
     });
 
+    $container->set("IpnAction", function($container) {
+        return new IpnAction($container->get(IpnValidator::class));
+    });
+
+    $container->set(IpnValidator::class, function($container) {
+        return new IpnValidator(new Client());
+    });
 
     $container->set("authentication", function () use ($container) {
         return new PhpSession(
@@ -32,12 +42,11 @@ return function (ContainerInterface $container) {
         };
     });
 
-    $container->set("pdo", function () {
+    $container->set("pdo", function ($container) {
         $pdo = new PDO("sqlite:db.sqlite");
-        $pdo->query("DROP TABLE IF EXISTS user");
-        $pdo->query("CREATE TABLE user (id INT(11) PRIMARY KEY, username varchar(32), password varchar(32))");
-        $pass = password_hash("training", PASSWORD_BCRYPT);
-        $pdo->query("INSERT INTO user (id, username, password) VALUES (1, 'training', '$pass')");
+        foreach ($container->get("migrations") as $changeSet) {
+            $pdo->query($changeSet);
+        }
         return $pdo;
     });
 };

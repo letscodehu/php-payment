@@ -7,6 +7,8 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $container = new Container();
 
+$migrations = require __DIR__."/../app/migrations.php";
+$container->set("migrations", $migrations);
 
 $services = require __DIR__."/../app/services.php";
 $services($container);
