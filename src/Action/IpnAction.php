@@ -3,31 +3,42 @@
 namespace App\Action;
 
 use App\Paypal\IpnValidator;
+use App\User\RegistrationService;
+use App\User\SubscriptionService;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class IpnAction {
+class IpnAction
+{
 
     private IpnValidator $validator;
+    private RegistrationService $registration;
+    private SubscriptionService $subscription;
 
-    public function __construct(IpnValidator $validator)
+    public function __construct(IpnValidator $validator, SubscriptionService $subscription, RegistrationService $registration)
     {
         $this->validator = $validator;
+        $this->registration = $registration;
+        $this->subscription = $subscription;
     }
 
-    public function handle(RequestInterface $request, ResponseInterface $response) : ResponseInterface {
+    public function handle(RequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
         if ($this->validator->validate($request)) {
-            // check on whats in the body
-            // register the user with the email
-            // - create user record
-            // - create activation token
-            // - send email with token
-            // activate the subscription
-            // - create subscription record 
-            // - if payment was made create subscription timeframe
+            $body = $request->getBody();
+            $email = $body["payer_email"];
+            $externalSubscriptionId = $body["subscr_id"];
+            $this->registration->register($email);
+            $this->subscription->activate($email, $externalSubscriptionId, $body["item_number"]);
+            if ($this->subscriptionPayment((array) $body)) {
+                $this->subscription->addTime($externalSubscriptionId, $body["txn_id"]);
+            }
         }
         return $response;
     }
 
+    private function subscriptionPayment(array $body): bool
+    {
+        return $body["txn_type"] === "subscr_payment" && $body["payment_status"] === "Completed";
+    }
 }
-
