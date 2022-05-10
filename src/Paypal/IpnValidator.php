@@ -23,6 +23,6 @@ class IpnValidator
             "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr",
             ["body" => $requestBody]
         );
-        return ($res->getBody() === "VERIFIED");
+        return ($res->getBody() == "VERIFIED");
     }
 }

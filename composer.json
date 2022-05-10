@@ -6,7 +6,8 @@
         "php-di/php-di": "^6.3",
         "mezzio/mezzio-authentication": "^1.4",
         "mezzio/mezzio-authentication-session": "^1.4",
-        "mezzio/mezzio-session-ext": "^1.12"
+        "mezzio/mezzio-session-ext": "^1.12",
+        "symfony/mailer": "^5.4"
     },
     "scripts" : {
         "dev" : "php -S localhost:8888 -t public public/index.php",

@@ -5,8 +5,8 @@ namespace App\Action;
 use App\Paypal\IpnValidator;
 use App\User\RegistrationService;
 use App\User\SubscriptionService;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Slim\Psr7\Request;
 
 class IpnAction
 {
@@ -22,10 +22,10 @@ class IpnAction
         $this->subscription = $subscription;
     }
 
-    public function handle(RequestInterface $request, ResponseInterface $response): ResponseInterface
+    public function handle(Request $request, ResponseInterface $response): ResponseInterface
     {
         if ($this->validator->validate($request)) {
-            $body = $request->getBody();
+            $body = $request->getParsedBody();
             $email = $body["payer_email"];
             $externalSubscriptionId = $body["subscr_id"];
             $this->registration->register($email);
