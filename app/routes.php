@@ -63,6 +63,12 @@ return function (App $app) {
         return view($response, "login");
     });
 
+    $app->get('/user/activate/{token}', function (Request $request, Response $response, array $args) {
+        return view($response, "activate", ["token" => $args["token"]]);
+    });
+
+    $app->post('/user/activate', 'ActivateAction:activate');
+
     $app->get('/cancel', function (Request $request, Response $response, array $args) {
         return view($response, "cancel");
     })->addMiddleware($app->getContainer()->get('authMiddleware'));

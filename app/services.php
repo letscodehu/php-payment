@@ -1,5 +1,6 @@
 <?php
 
+use App\Action\ActivateAction;
 use App\Action\IpnAction;
 use App\Paypal\IpnValidator;
 use App\User\RegistrationService;
@@ -26,7 +27,11 @@ return function (ContainerInterface $container) {
         return new IpnAction($container->get(IpnValidator::class), $container->get(SubscriptionService::class), $container->get(RegistrationService::class));
     });
 
-    $container->set(MailerInterface::class, function($con) {
+    $container->set("ActivateAction", function ($con) {
+        return new ActivateAction($con->get(RegistrationService::class));
+    });
+
+    $container->set(MailerInterface::class, function ($con) {
         $transport = (new EsmtpTransportFactory())->create(Dsn::fromString("smtp://07ea3bd5552b7a:302af4f41ffbaf@smtp.mailtrap.io:2525?encryption=tls&auth_mode=login"));
         return new Mailer($transport);
     });

@@ -60,12 +60,47 @@ class RegistrationService
     private function sendMail(string $email, string $token)
     {
         $url = "http://localhost:8888/user/activate/" . $token;
+        extract($with);
+        ob_start();
+        require(__DIR__ . "/../../templates/activate_email.phtml");
+        $content = ob_get_clean();
         $email = (new Email())
             ->from('noreply@letscode.hu')
             ->to($email)
             ->subject("Successful registration")
             ->text("Click here to activate your user: $url")
-            ->html("<p>Click <a href='$url'>here</a> to activate your user.</p>");
+            ->html($content);
         $this->mailer->send($email);
+    }
+
+    public function activate(?string $token, ?string $password, ?string $confirmation): bool
+    {
+        $userId = $this->getUserId($token);
+        if ($password === $confirmation && $userId > 0) {
+            $this->updatePassword($userId, $password);
+            $this->removeToken($token);
+            return true;
+        }
+        return false;
+    }
+
+    private function getUserId(string $token): ?int
+    {
+        $stmt = $this->pdo->prepare("SELECT user_id FROM password_reset_token WHERE id = :token AND expires > :expires");
+        $stmt->execute(["expires" => time(), "token" => $token]);
+        return $stmt->fetchColumn(0);
+    }
+
+    private function updatePassword($userId, string $password): bool
+    {
+        $stmt = $this->pdo->prepare("UPDATE user SET password = :password WHERE id = :user_id");
+        $stmt->execute(["user_id" => $userId, "password" => password_hash($password, PASSWORD_BCRYPT)]);
+        return true;
+    }
+
+    private function removeToken($token)
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM password_reset_token WHERE id = :token");
+        $stmt->execute(["token" => $token]);
     }
 }
