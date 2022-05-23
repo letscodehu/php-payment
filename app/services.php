@@ -40,8 +40,8 @@ return function (ContainerInterface $container) {
     $container->set(RegistrationService::class, function ($c) {
         return new RegistrationService($c->get(MailerInterface::class), $c->get("pdo"));
     });
-    $container->set(SubscriptionService::class, function ($container) {
-        return new SubscriptionService();
+    $container->set(SubscriptionService::class, function ($c) {
+        return new SubscriptionService($c->get("pdo"), $c->get(MailerInterface::class));
     });
     $container->set(IpnValidator::class, function ($container) {
         return new IpnValidator(new Client());

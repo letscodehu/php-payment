@@ -1,5 +1,6 @@
 <?php
 
+use App\User\SubscriptionService;
 use Mezzio\Authentication\UserInterface;
 use Mezzio\Session\SessionMiddleware;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -38,6 +39,8 @@ return function (App $app) {
 
     $app->get('/profile', function (Request $request, Response $response, array $args) {
         $user = $this->get('authentication')->authenticate($request);
+        $subscribed = $this->get(SubscriptionService::class)->hasActiveSubscription($user->getIdentity());
+        var_dump($subscribed);
         return view($response, "index", ["loggedIn" => $user]);
     })->addMiddleware($app->getContainer()->get("authMiddleware"));
 

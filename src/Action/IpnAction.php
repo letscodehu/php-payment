@@ -28,8 +28,8 @@ class IpnAction
             $body = $request->getParsedBody();
             $email = $body["payer_email"];
             $externalSubscriptionId = $body["subscr_id"];
-            $this->registration->register($email);
-            $this->subscription->activate($email, $externalSubscriptionId, $body["item_number"]);
+            $userId = $this->registration->register($email);
+            $this->subscription->activate($userId, $externalSubscriptionId, $body["item_number"]);
             if ($this->subscriptionPayment((array) $body)) {
                 $this->subscription->addTime($externalSubscriptionId, $body["txn_id"]);
             }

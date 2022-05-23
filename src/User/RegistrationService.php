@@ -19,7 +19,7 @@ class RegistrationService
         $this->pdo = $pdo;
     }
 
-    public function register(string $email)
+    public function register(string $email): int
     {
         if ($this->notYetRegistered($email)) {
             try {
@@ -33,6 +33,7 @@ class RegistrationService
                 throw $e;
             }
         }
+        return $this->getUserIdByEmail($email);
     }
 
     private function createUser(string $email): int
@@ -88,6 +89,13 @@ class RegistrationService
     {
         $stmt = $this->pdo->prepare("SELECT user_id FROM password_reset_token WHERE id = :token AND expires > :expires");
         $stmt->execute(["expires" => time(), "token" => $token]);
+        return $stmt->fetchColumn(0);
+    }
+
+    private function getUserIdByEmail(string $email): ?int
+    {
+        $stmt = $this->pdo->prepare("SELECT id FROM user WHERE username = :email");
+        $stmt->execute(["email" => $email]);
         return $stmt->fetchColumn(0);
     }
 
