@@ -43,6 +43,7 @@ return function (ContainerInterface $container) {
     $container->set(SubscriptionService::class, function ($c) {
         return new SubscriptionService($c->get("pdo"), $c->get(MailerInterface::class));
     });
+
     $container->set(IpnValidator::class, function ($container) {
         return new IpnValidator(new Client());
     });
@@ -67,6 +68,9 @@ return function (ContainerInterface $container) {
 
     $container->set("pdo", function ($container) {
         $pdo = new PDO("sqlite:db.sqlite");
+        $pdo->query(
+            "PRAGMA foreign_keys = ON;"
+        );
         foreach ($container->get("migrations") as $changeSet) {
             $pdo->query($changeSet);
         }

@@ -19,7 +19,7 @@ class RegistrationService
         $this->pdo = $pdo;
     }
 
-    public function register(string $email): int
+    public function register(string $email) : int
     {
         if ($this->notYetRegistered($email)) {
             try {
@@ -28,6 +28,7 @@ class RegistrationService
                 $token = $this->associateToken($id);
                 $this->sendMail($email, $token);
                 $this->pdo->commit();
+                return $id;
             } catch (Exception $e) {
                 $this->pdo->rollBack();
                 throw $e;
@@ -56,6 +57,13 @@ class RegistrationService
         $stmt = $this->pdo->prepare("SELECT username FROM user WHERE username = :email");
         $stmt->execute(["email" => $email]);
         return $stmt->fetch() === false;
+    }
+
+    private function getUserIdByEmail(string $email): bool
+    {
+        $stmt = $this->pdo->prepare("SELECT id FROM user WHERE username = :email");
+        $stmt->execute(["email" => $email]);
+        return $stmt->fetchColumn(0);
     }
 
     private function sendMail(string $email, string $token)

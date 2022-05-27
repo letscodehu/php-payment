@@ -4,10 +4,27 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.84.0">
     <title>Profile</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/checkout/">
+
+
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" href="/docs/5.0/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+    <link rel="icon" href="/docs/5.0/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="/docs/5.0/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+    <link rel="manifest" href="/docs/5.0/assets/img/favicons/manifest.json">
+    <link rel="mask-icon" href="/docs/5.0/assets/img/favicons/safari-pinned-tab.svg" color="#7952b3">
+    <link rel="icon" href="/docs/5.0/assets/img/favicons/favicon.ico">
+    <meta name="theme-color" content="#7952b3">
+
 
     <style>
         .bd-placeholder-img {
@@ -24,58 +41,108 @@
             }
         }
 
-        body {
-            background-image: linear-gradient(180deg, #eee, #fff 100px, #fff);
-        }
-
         .container {
             max-width: 960px;
         }
-
-        .pricing-header {
-            max-width: 700px;
-        }
     </style>
+
 </head>
 
-<body>
-    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-        <symbol id="check" viewBox="0 0 16 16">
-            <title>Check</title>
-            <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
-        </symbol>
-    </svg>
+<body class="d-flex h-100 text-center">
 
-    <div class="container py-3">
+
+    <div class="container d-flex w-100 h-100 p-3 mx-auto flex-column">
         <header>
             <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
 
                 <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
                     <a class="me-3 py-2 text-dark text-decoration-none" href="/">Home</a>
-                    <a class="me-3 py-2 text-dark text-decoration-none active" href="/plans">Plans</a>
-                    <a class="me-3 py-2 text-dark text-decoration-none" href="/profile">Profile</a>
-                    <a class="py-2 text-dark text-decoration-none" href="/logout">Logout</a>
+                    <a class="me-3 py-2 text-dark text-decoration-none" href="/plans">Plans</a>
+                    <?php if ($loggedIn) : ?>
+                        <a class="me-3 py-2 text-dark text-decoration-none active" href="/profile">Profile</a>
+                        <a class="py-2 text-dark text-decoration-none" href="/logout">Logout</a>
+                    <?php else : ?>
+                        <a class="py-2 text-dark text-decoration-none" href="/login">Login</a>
+                    <?php endif ?>
                 </nav>
             </div>
 
-            <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-                <h1 class="display-4 fw-normal">Profile</h1>
-                <p class="fs-5 text-muted">Yeah, this will be the profile page later.</p>
-            </div>
         </header>
-
-        <main>
-            <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+        <div class="row">
+            <div class="col-md-3 border-right">
+                <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"><span class="text-black-50"><?= $email ?></span><span> </span></div>
             </div>
-        </main>
-
-        <footer class="pt-4 my-md-5 pt-md-5 border-top">
-            <div class="row">
+            <div class="col-md-5 border-right">
+                <div class="p-3 py-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="text-right">Profile Settings</h4>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-6"><label class="labels">Name</label><input type="text" class="form-control" placeholder="first name" value=""></div>
+                        <div class="col-md-6"><label class="labels">Surname</label><input type="text" class="form-control" value="" placeholder="surname"></div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6"><label class="labels">Country</label><input type="text" class="form-control" placeholder="country" value=""></div>
+                        <div class="col-md-6"><label class="labels">State/Region</label><input type="text" class="form-control" value="" placeholder="state"></div>
+                    </div>
+                    <div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="button">Save Profile</button></div>
+                    <div class="row mt-3">
+                    </div>
+                </div>
             </div>
-        </footer>
+            <div class="col-md-4">
+                <div class="p-3 py-5">
+                    <div class="d-flex justify-content-between align-items-center experience">
+                        <h5>Subscription Settings</h5>
+                    </div><br>
+                    <div class="col-md-12"><label class="labels">Subscription status:</label>
+                        <?php if ($subscribed) : ?>
+                            <label class="labels">Active</label>
+                        <?php else : ?>
+                            <label class="labels">Inactive</label>
+                        <?php endif; ?>
+                    </div> <br>
+                    <?php if ($subscribed) : ?>
+                        <div class="col-md-12"><label class="labels">Active plan:</label>
+                            <label class="labels"><?= $plan ?></label>
+                        </div> <br>
+                    <?php endif; ?>
+                    <?php if ($subscribed) : ?>
+                        <a class="btn btn-primary" type="button" href="/subscription/cancel">Cancel subscription</a>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="text-right">Transactions</h4>
+                </div>
+                <div class="row mt-3">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Time</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Plan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                        <?php foreach ($transactions as $t) : ?>
+                            <tr>
+                                <th scope="row"><?= $t["id"] ?></th>
+                                <th scope="row"><?= $t["time"] ?></th>
+                                <th scope="row"><?= $t["amount"] ?></th>
+                                <th scope="row"><?= $t["plan"] ?></th>
+                            </tr>
+                        <?php endforeach ?>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-
-
+    </div>
+    </div>
 
 </body>
 

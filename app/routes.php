@@ -39,9 +39,8 @@ return function (App $app) {
 
     $app->get('/profile', function (Request $request, Response $response, array $args) {
         $user = $this->get('authentication')->authenticate($request);
-        $subscribed = $this->get(SubscriptionService::class)->hasActiveSubscription($user->getIdentity());
-        var_dump($subscribed);
-        return view($response, "index", ["loggedIn" => $user]);
+        $subscriptionInfo = $this->get(SubscriptionService::class)->getSubscriptionInfo($user->getIdentity());
+        return view($response, "profile", ["subscribed" => $subscriptionInfo->isActive(), "email" => $user->getIdentity(), "loggedIn" => $user, "transactions" => $subscriptionInfo->getTransactions(), "plan" => $subscriptionInfo->getPlan()]);
     })->addMiddleware($app->getContainer()->get("authMiddleware"));
 
     $app->get('/success', function (Request $request, Response $response, array $args) {
