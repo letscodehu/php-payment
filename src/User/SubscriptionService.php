@@ -3,8 +3,10 @@
 namespace App\User;
 
 use DateTimeImmutable;
+use Exception;
 use PDO;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 class SubscriptionService
 {
@@ -38,8 +40,15 @@ class SubscriptionService
             return;
         }
         if ($this->transactionNotProcessed($txnId)) {
-            $this->addTimeToSubscription($externalSubscriptionId, $txnId);
-            $this->sendSubscriptionExtendedEmail($externalSubscriptionId);
+            $this->pdo->beginTransaction();
+            try {
+                $this->addTimeToSubscription($externalSubscriptionId, $txnId);
+                $this->sendSubscriptionExtendedEmail($txnId);
+                $this->pdo->commit();
+            } catch (Exception $e) {
+                $this->pdo->rollBack();
+                throw $e;
+            }
         }
     }
 
@@ -95,8 +104,25 @@ class SubscriptionService
     }
 
 
-    private function sendSubscriptionExtendedEmail(string $externalSubscriptionId): void
+    private function sendSubscriptionExtendedEmail(string $txnId): void
     {
+        $url = "http://localhost:8888";
+        $stmt = $this->pdo->prepare("SELECT u.username as email, sp.start, sp.end, p.name AS plan FROM subscription_period AS sp JOIN subscription AS s ON s.id = sp.subscription_id JOIN user AS u ON u.id = s.user_id JOIN product AS p ON p.id = s.product_id WHERE sp.txn_id = :id");
+        $stmt->execute(["id" => $txnId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        extract($row);
+        $start = date("Y.m.d H:i:s", $start);
+        $end = date("Y.m.d H:i:s", $end);
+        ob_start();
+        require(__DIR__ . "/../../templates/subscribe_email.phtml");
+        $content = ob_get_clean();
+        $email = (new Email())
+            ->from('noreply@letscode.hu')
+            ->to($email)
+            ->subject("Subscription extended!")
+            ->text("Your subscription is extended until $end. You can cancel your subscription anytime at your profile page.")
+            ->html($content);
+        $this->mailer->send($email);
     }
 
     private function addTimeToSubscription(string $externalSubscriptionId, string $txnId): void

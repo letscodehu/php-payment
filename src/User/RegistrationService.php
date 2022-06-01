@@ -59,17 +59,9 @@ class RegistrationService
         return $stmt->fetch() === false;
     }
 
-    private function getUserIdByEmail(string $email): bool
-    {
-        $stmt = $this->pdo->prepare("SELECT id FROM user WHERE username = :email");
-        $stmt->execute(["email" => $email]);
-        return $stmt->fetchColumn(0);
-    }
-
     private function sendMail(string $email, string $token)
     {
         $url = "http://localhost:8888/user/activate/" . $token;
-        extract($with);
         ob_start();
         require(__DIR__ . "/../../templates/activate_email.phtml");
         $content = ob_get_clean();

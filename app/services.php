@@ -68,12 +68,10 @@ return function (ContainerInterface $container) {
 
     $container->set("pdo", function ($container) {
         $pdo = new PDO("sqlite:db.sqlite");
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->query(
             "PRAGMA foreign_keys = ON;"
         );
-        foreach ($container->get("migrations") as $changeSet) {
-            $pdo->query($changeSet);
-        }
         return $pdo;
     });
 };
