@@ -73,5 +73,12 @@ return function (App $app) {
 
     $app->get('/cancel', function (Request $request, Response $response, array $args) {
         return view($response, "cancel");
-    })->addMiddleware($app->getContainer()->get('authMiddleware'));
+    });
+    $app->get('/migrate', function(Request $request, Response $response) {
+        $pdo = $this->get('pdo');
+        foreach ($this->get("migrations") as $changeSet) {
+            $pdo->query($changeSet);
+        }
+        return $response;
+    });
 };
