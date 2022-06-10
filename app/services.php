@@ -2,6 +2,7 @@
 
 use App\Action\ActivateAction;
 use App\Action\IpnAction;
+use App\Paypal\Client as PaypalClient;
 use App\Paypal\IpnValidator;
 use App\User\RegistrationService;
 use App\User\SubscriptionService;
@@ -27,6 +28,9 @@ return function (ContainerInterface $container) {
         return new IpnAction($container->get(IpnValidator::class), $container->get(SubscriptionService::class), $container->get(RegistrationService::class));
     });
 
+    $container->set(PaypalClient::class, function ($c) {
+        return new PaypalClient(new Client(), "Af2aBrrwIkK5amZkIL0AiFb0QVlbZZDniKhlXFZd-L0NQF5gns2XtZgQEgNsUi92b0UrudzrVzMnME97", "EH6SMioyn6HRGOFAEpGgSiohJzJcq65ovuIhlEx-wtd6fMyc98jp6iXO8SZEm75ErozDv_ZXDVxDsSKM");
+    });
     $container->set("ActivateAction", function ($con) {
         return new ActivateAction($con->get(RegistrationService::class));
     });

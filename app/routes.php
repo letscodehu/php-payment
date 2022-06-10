@@ -1,5 +1,6 @@
 <?php
 
+use App\Paypal\Client;
 use App\User\SubscriptionService;
 use Mezzio\Authentication\UserInterface;
 use Mezzio\Session\SessionMiddleware;
@@ -22,6 +23,12 @@ return function (App $app) {
 
     $app->post('/ipn', "IpnAction:handle");
 
+    $app->get('/test', function (Request $request, Response $response, array $args) {
+        $client = $this->get(Client::class);
+        $client->cancelSubscription("I-N9SVR3K4EH66");
+        die;
+        return view($response, "index", );
+    });
     $app->get('/', function (Request $request, Response $response, array $args) {
         $user = $this->get('authentication')->authenticate($request);
         return view($response, "index", ["loggedIn" => $user]);

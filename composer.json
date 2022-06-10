@@ -10,8 +10,14 @@
         "symfony/mailer": "^5.4"
     },
     "scripts" : {
-        "dev" : "php -S localhost:8888 -t public public/index.php",
-        "expose" : "expose share http://localhost:8888 --subdomain letscodehu"
+        "dev" : [
+            "Composer\\Config::disableProcessTimeout", 
+"php -S localhost:8888 -t public public/index.php"
+        ],
+        "expose" : [
+            "Composer\\Config::disableProcessTimeout", 
+"expose share http://localhost:8888 --subdomain letscodehu"
+        ]
     },
     "require-dev": {
         "beyondcode/expose": "^2.0"
