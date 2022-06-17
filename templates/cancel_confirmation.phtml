@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <title>Letscode CRM - Successful payment</title>
+    <title>Letscode CRM - Subscription cancel</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
@@ -93,19 +93,19 @@
                 <nav class="nav nav-masthead justify-content-center float-md-end">
                     <a class="nav-link" aria-current="page" href="#">Home</a>
                     <a class="nav-link" href="/plans">Plans</a>
-<? if($loggedIn) :?>
                     <a class="nav-link" href="/profile">Profile</a>
                     <a class="nav-link" href="/logout">Logout</a>
-<? else: ?>
-                    <a class="nav-link" href="/login">Login</a>
-<? endif ?>
                 </nav>
             </div>
         </header>
 
         <main class="px-3">
-            <h1>Payment successful</h1>
-            <p class="lead">We need to take care a few thing in the background. In the meanwhile you should check your mailbox, we sent an e-mail with an activation link.</p>
+            <h1>Subscription cancel</h1>
+            <p class="lead">Are you sure you want to cancel your subscription?</p>
+            <form action="/subscription/cancel" method="POST">
+                <button class="w-20 btn btn-lg btn-primary" type="submit">Cancel Subscription</button>
+                <a href="/" class="btn btn-lg btn-secondary fw-bold border-white bg-white">Back to home</a>
+            </form>
         </main>
 
         <footer class="mt-auto text-white-50">

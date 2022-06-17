@@ -2,6 +2,7 @@
 
 use App\Action\ActivateAction;
 use App\Action\IpnAction;
+use App\Action\SubscriptionCancelAction;
 use App\Paypal\Client as PaypalClient;
 use App\Paypal\IpnValidator;
 use App\User\RegistrationService;
@@ -35,6 +36,10 @@ return function (ContainerInterface $container) {
         return new ActivateAction($con->get(RegistrationService::class));
     });
 
+    $container->set("SubscriptionCancelAction", function ($con) {
+        return new SubscriptionCancelAction($con->get(SubscriptionService::class), $con->get('authentication'));
+    });
+
     $container->set(MailerInterface::class, function ($con) {
         $transport = (new EsmtpTransportFactory())->create(Dsn::fromString("smtp://07ea3bd5552b7a:302af4f41ffbaf@smtp.mailtrap.io:2525?encryption=tls&auth_mode=login"));
         return new Mailer($transport);
@@ -45,7 +50,7 @@ return function (ContainerInterface $container) {
         return new RegistrationService($c->get(MailerInterface::class), $c->get("pdo"));
     });
     $container->set(SubscriptionService::class, function ($c) {
-        return new SubscriptionService($c->get("pdo"), $c->get(MailerInterface::class));
+        return new SubscriptionService($c->get("pdo"), $c->get(MailerInterface::class), $c->get(PaypalClient::class));
     });
 
     $container->set(IpnValidator::class, function ($container) {

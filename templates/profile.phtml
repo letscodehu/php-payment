@@ -96,18 +96,18 @@
                         <h5>Subscription Settings</h5>
                     </div><br>
                     <div class="col-md-12"><label class="labels">Subscription status:</label>
-                        <?php if ($subscribed) : ?>
-                            <label class="labels">Active</label>
-                        <?php else : ?>
-                            <label class="labels">Inactive</label>
-                        <?php endif; ?>
+                        <label class="labels"><?= $status?></label>
                     </div> <br>
                     <?php if ($subscribed) : ?>
                         <div class="col-md-12"><label class="labels">Active plan:</label>
                             <label class="labels"><?= $plan ?></label>
                         </div> <br>
-                    <?php endif; ?>
-                    <?php if ($subscribed) : ?>
+                        <div class="col-md-12"><label class="labels">
+                    <?if ($cancellable): ?>Renews<?php else: ?>Expires<?php endif; ?> at:</label>
+                            <label class="labels"><?= $expiry ?></label>
+                        </div> <br>
+                    <?php endif ?>
+                    <?php if ($cancellable) : ?>
                         <a class="btn btn-primary" type="button" href="/subscription/cancel">Cancel subscription</a>
                     <?php endif; ?>
                 </div>

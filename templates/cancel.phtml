@@ -93,8 +93,12 @@
                 <nav class="nav nav-masthead justify-content-center float-md-end">
                     <a class="nav-link" aria-current="page" href="#">Home</a>
                     <a class="nav-link" href="/plans">Plans</a>
+                    <? if($loggedIn) :?>
                     <a class="nav-link" href="/profile">Profile</a>
                     <a class="nav-link" href="/logout">Logout</a>
+                    <? else: ?>
+                    <a class="nav-link" href="/login">Login</a>
+                    <? endif ?>
                 </nav>
             </div>
         </header>
