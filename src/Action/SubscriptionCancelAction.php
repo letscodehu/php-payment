@@ -15,11 +15,11 @@ class SubscriptionCancelAction
 
     public function __construct(SubscriptionService $subscriptionService, AuthenticationInterface $authenticationInterface)
     {
-        $this->authentication = $authenticationInterface;
         $this->subscriptionService = $subscriptionService;
+        $this->authentication = $authenticationInterface;
     }
 
-    public function handle(Request $request, ResponseInterface $response): ResponseInterface
+    public function handle(Request $request, ResponseInterface $responseInterface): ResponseInterface
     {
         $user = $this->authentication->authenticate($request);
         $this->subscriptionService->cancelSubscription($user->getIdentity());

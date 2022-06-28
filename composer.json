@@ -7,7 +7,8 @@
         "mezzio/mezzio-authentication": "^1.4",
         "mezzio/mezzio-authentication-session": "^1.4",
         "mezzio/mezzio-session-ext": "^1.12",
-        "symfony/mailer": "^5.4"
+        "symfony/mailer": "^5.4",
+        "vlucas/phpdotenv": "^5.4"
     },
     "scripts" : {
         "dev" : [

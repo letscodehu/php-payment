@@ -1,8 +1,6 @@
 <?php
 
-use App\Paypal\Client;
 use App\User\SubscriptionService;
-use GuzzleHttp\Psr7\Request as Psr7Request;
 use Mezzio\Authentication\UserInterface;
 use Mezzio\Session\SessionMiddleware;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -22,17 +20,19 @@ return function (App $app) {
         return $response;
     }
 
+    $app->get('/subscription/cancel', function (Request $request, Response $response, array $args) {
+        $user = $this->get('authentication')->authenticate($request);
+        return view($response, "cancel_confirmation", ["loggedIn" => $user]);
+    });
+
+    $app->post('/subscription/cancel', "SubscriptionCancelAction:handle");
+
+    $app->get('/subscription/cancelled', function (Request $request, Response $response, array $args) {
+        $user = $this->get('authentication')->authenticate($request);
+        return view($response, "subscription_cancelled", ["loggedIn" => $user]);
+    });
+
     $app->post('/ipn', "IpnAction:handle");
-
-    $app->get('/subscription/cancel', function (Request $request, Response $response) {
-        return view($response, "cancel_confirmation");
-    })->addMiddleware($app->getContainer()->get("authMiddleware"));
-
-    $app->get('/subscription/cancelled', function (Request $request, Response $response) {
-        return view($response, "subscription_cancelled");
-    })->addMiddleware($app->getContainer()->get("authMiddleware"));
-
-    $app->post('/subscription/cancel', 'SubscriptionCancelAction:handle')->addMiddleware($app->getContainer()->get("authMiddleware"));
 
     $app->get('/', function (Request $request, Response $response, array $args) {
         $user = $this->get('authentication')->authenticate($request);
@@ -44,17 +44,33 @@ return function (App $app) {
         $session->unset(UserInterface::class);
         $resp = new Psr7Response(302);
         return $resp->withHeader("Location", "/");
-    })->addMiddleware($app->getContainer()->get("authMiddleware"));
+    });
 
     $app->get('/plans', function (Request $request, Response $response, array $args) {
         $user = $this->get('authentication')->authenticate($request);
-        return view($response, "plans", ["loggedIn" => $user]);
+        return view($response, "plans", ["loggedIn" => $user, "buttons" => [
+            "basic" => $_ENV["BASIC_BUTTON_ID"], "pro" => $_ENV["PRO_BUTTON_ID"], "enterprise" => $_ENV["ENTERPRISE_BUTTON_ID"]
+        ]]);
     });
 
     $app->get('/profile', function (Request $request, Response $response, array $args) {
         $user = $this->get('authentication')->authenticate($request);
         $subscriptionInfo = $this->get(SubscriptionService::class)->getSubscriptionInfo($user->getIdentity());
-        return view($response, "profile", ["expiry" => $subscriptionInfo->getExpiry(), "subscribed" => $subscriptionInfo->isActive(), "cancellable" => $subscriptionInfo->cancellable() ,"status" => $subscriptionInfo->getStatus(), "email" => $user->getIdentity(), "loggedIn" => $user, "transactions" => $subscriptionInfo->getTransactions(), "plan" => $subscriptionInfo->getPlan()]);
+        return view(
+            $response,
+            "profile",
+            [
+                "subscribed" => $subscriptionInfo->isActive(),
+                "email" => $user->getIdentity(),
+                "loggedIn" => $user,
+                "cancellable" => $subscriptionInfo->cancellable(),
+                "status" => $subscriptionInfo->getStatus(),
+                "expiry" => $subscriptionInfo->getExpires(),
+                "transactions" => $subscriptionInfo->getTransactions(),
+                "plan" => $subscriptionInfo->getPlan()
+            ]
+
+        );
     })->addMiddleware($app->getContainer()->get("authMiddleware"));
 
     $app->get('/success', function (Request $request, Response $response, array $args) {

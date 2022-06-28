@@ -1,0 +1,22 @@
+services:
+  php:
+    build: .
+    ports:
+      - 8888:80
+    environment:
+      - DB_DSN=mysql:host=mysql;port=3306;dbname=php-payment
+      - DB_USER=php
+      - DB_PASSWORD=password
+      - PAYPAL_CLIENT_ID=Af2aBrrwIkK5amZkIL0AiFb0QVlbZZDniKhlXFZd-L0NQF5gns2XtZgQEgNsUi92b0UrudzrVzMnME97
+      - PAYPAL_CLIENT_SECRET=EH6SMioyn6HRGOFAEpGgSiohJzJcq65ovuIhlEx-wtd6fMyc98jp6iXO8SZEm75ErozDv_ZXDVxDsSKM
+      - MAILER_DSN=smtp://07ea3bd5552b7a:302af4f41ffbaf@smtp.mailtrap.io:2525?encryption=tls&auth_mode=login
+      - BASIC_BUTTON_ID=D42HS2Q494R4L
+      - PRO_BUTTON_ID=D42HS2Q494R4L
+      - ENTERPRISE_BUTTON_ID=D42HS2Q494R4L
+  mysql:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=somesupersecret
+      - MYSQL_DATABASE=php-payment
+      - MYSQL_USER=php
+      - MYSQL_PASSWORD=password

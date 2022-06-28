@@ -1,9 +1,15 @@
 <?php
 
 use DI\Container;
+use Dotenv\Dotenv;
 use Slim\Factory\AppFactory;
 
+
 require __DIR__ . '/../vendor/autoload.php';
+
+$dotenv = Dotenv::createImmutable(__DIR__.'/..');
+$dotenv->safeLoad();
+$dotenv->required(["DB_DSN", "PAYPAL_CLIENT_ID", "PAYPAL_CLIENT_SECRET", "MAILER_DSN", "BASIC_BUTTON_ID", "PRO_BUTTON_ID", "ENTERPRISE_BUTTON_ID"]);
 
 $container = new Container();
 

@@ -29,8 +29,12 @@ return function (ContainerInterface $container) {
         return new IpnAction($container->get(IpnValidator::class), $container->get(SubscriptionService::class), $container->get(RegistrationService::class));
     });
 
+    $container->set("SubscriptionCancelAction", function ($c) {
+        return new SubscriptionCancelAction($c->get(SubscriptionService::class), $c->get("authentication"));
+    });
+
     $container->set(PaypalClient::class, function ($c) {
-        return new PaypalClient(new Client(), "Af2aBrrwIkK5amZkIL0AiFb0QVlbZZDniKhlXFZd-L0NQF5gns2XtZgQEgNsUi92b0UrudzrVzMnME97", "EH6SMioyn6HRGOFAEpGgSiohJzJcq65ovuIhlEx-wtd6fMyc98jp6iXO8SZEm75ErozDv_ZXDVxDsSKM");
+        return new PaypalClient(new Client(), $_ENV["PAYPAL_CLIENT_ID"], $_ENV["PAYPAL_CLIENT_SECRET"]);
     });
     $container->set("ActivateAction", function ($con) {
         return new ActivateAction($con->get(RegistrationService::class));
@@ -41,7 +45,7 @@ return function (ContainerInterface $container) {
     });
 
     $container->set(MailerInterface::class, function ($con) {
-        $transport = (new EsmtpTransportFactory())->create(Dsn::fromString("smtp://07ea3bd5552b7a:302af4f41ffbaf@smtp.mailtrap.io:2525?encryption=tls&auth_mode=login"));
+        $transport = (new EsmtpTransportFactory())->create(Dsn::fromString($_ENV["MAILER_DSN"]));
         return new Mailer($transport);
     });
 
@@ -76,11 +80,13 @@ return function (ContainerInterface $container) {
     });
 
     $container->set("pdo", function ($container) {
-        $pdo = new PDO("sqlite:db.sqlite");
+        $pdo = new PDO($_ENV["DB_DSN"], $_ENV["DB_USER"], $_ENV["DB_PASSWORD"]);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $pdo->query(
-            "PRAGMA foreign_keys = ON;"
-        );
+        if (!$_ENV["DB_USER"]) {
+            $pdo->query(
+                "PRAGMA foreign_keys = ON;"
+            );
+        }
         return $pdo;
     });
 };

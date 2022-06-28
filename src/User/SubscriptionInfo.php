@@ -2,15 +2,14 @@
 
 namespace App\User;
 
-use DateTime;
 
 class SubscriptionInfo
 {
     private bool $active;
     private ?string $plan;
-    private ?string $status;
-    private ?string $id;
     private array $transactions;
+    private ?string $id;
+    private ?string $status;
     private ?string $expires;
 
     public function __construct(bool $active, ?string $plan = null, array $transactions = [], ?string $status = null, ?string $id = null, ?string $expires = null)
@@ -21,6 +20,9 @@ class SubscriptionInfo
         $this->plan = $plan;
         $this->expires = $expires;
         $this->transactions = $transactions;
+        $this->id = $id;
+        $this->status = $status;
+        $this->expires = $expires;
     }
 
     public function isActive(): bool
@@ -32,6 +34,12 @@ class SubscriptionInfo
     {
         return $this->plan;
     }
+
+    public function getExpires(): ?string
+    {
+        return $this->expires;
+    }
+
 
     public function getTransactions(): array
     {

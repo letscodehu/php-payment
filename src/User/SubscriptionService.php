@@ -5,7 +5,6 @@ namespace App\User;
 use App\Paypal\Client;
 use DateTimeImmutable;
 use Exception;
-use GuzzleHttp\Exception\ClientException;
 use PDO;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
@@ -73,11 +72,11 @@ class SubscriptionService
         }
         list($id, $plan, $status) = $this->getActiveSubscription($identity);
         $transactions = $this->getTransactions($identity);
-        $expiry = 0;
-        array_walk($transactions, function($t) use (&$expiry) {
-            $expiry = max($expiry, $t["end"]);
+        $expires = 0;
+        array_walk($transactions, function ($t) use (&$expires) {
+            $expires = max($expires, $t["end"]);
         });
-        return new SubscriptionInfo($active, $plan, $transactions, $status, $id, date("Y.m.d. H:i:s", $expiry));
+        return new SubscriptionInfo($active, $plan, $transactions, $status, $id, date("Y.m.d. H:i:s", $expires));
     }
 
     private function getActiveSubscription(string $identity): array
